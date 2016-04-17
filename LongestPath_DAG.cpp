@@ -10,7 +10,7 @@ class graph
     public:
     graph(int);
     void addedge(int,int);
-    void topo_bfs();
+    void longest_path();
 };
 graph::graph(int v)
 {
@@ -21,13 +21,16 @@ void graph::addedge(int a,int b)
 {
     adj[a].push_back(b);
 }
-void graph::topo_bfs()
+void graph::longest_path()
 {
-    int i,s,indeg[v],lpt[v];
+    int i,s,indeg[v],lpt[v],parent[v];  //parent array to backtrace longest path
     list<int> q;
     list<int>::iterator it;
     for(i=0;i<v;i++)
+    {
         indeg[i]=lpt[i]=0;
+        parent[i]=-1;
+    }    
     for(i=0;i<v;i++)
     {
         for(it=adj[i].begin();it!=adj[i].end();it++)
@@ -45,13 +48,15 @@ void graph::topo_bfs()
         for(it=adj[s].begin();it!=adj[s].end();it++)
         {
             indeg[*it]-=1;
+            if(lpt[s]+1>lpt[*it])
+                parent[*it]=s;
             lpt[*it]=max(lpt[*it],1+lpt[s]);
             if(indeg[*it]==0)
                 q.push_back(*it);
         }
     }
     for(i=0;i<v;i++)
-        cout<<"Vertex : "<<i<<" LPT : "<<lpt[i]<<endl;
+        cout<<"Vertex : "<<i<<" LPT : "<<lpt[i]<<" Parent : "<<parent[i]<<endl;
 }
 int main()
 {
@@ -63,6 +68,6 @@ int main()
 	    cin>>m>>n;
 	    g.addedge(m,n);
 	}
-	g.topo_bfs();
+	g.longest_path();
 	return 0;
 }
